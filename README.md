@@ -1,81 +1,187 @@
-# PhishGuard — Phishing Email Scanner
+# PhishGuard — AI-Based Phishing Email Detection Tool
 
-PhishGuard is a cybersecurity web app that analyzes email text and identifies possible phishing indicators. It scans for suspicious keywords, risky links, shortened URLs, unusual domain patterns, and common scam language. The app then generates a risk score, verdict, and explanation to help users understand why an email may be unsafe.
+PhishGuard is a cybersecurity project that analyzes email text and detects possible phishing indicators. The tool checks for suspicious words, risky links, shortened URLs, and common scam patterns, then generates a risk score and verdict.
 
-This project was built to explore email security, phishing detection, Python programming, Flask web development, and cybersecurity analysis.
+This project started as a Python terminal scanner and was later upgraded into a Flask web application.
+
+---
+
+## Project Overview
+
+Phishing emails are one of the most common ways attackers steal passwords, personal information, and financial data. PhishGuard helps users identify suspicious emails by analyzing the content and links inside the message.
+
+The goal of this project is to combine cybersecurity, Python programming, and web development into one practical tool.
+
+---
+
+## Current Version
+
+The current version is:
+
+**Version 2 — Flask Web Application**
+
+Version 2 allows users to paste suspicious email text into a website and receive a phishing analysis report.
+
+---
 
 ## Features
 
-* Paste suspicious email text into a web interface
-* Detect suspicious phishing-related keywords
-* Extract and analyze links from emails
-* Flag shortened URLs such as `bit.ly`, `tinyurl.com`, and `t.co`
-* Detect suspicious domain patterns, including:
+- Detects suspicious phishing-related keywords
+- Extracts links from email text
+- Flags shortened URLs such as `bit.ly`, `tinyurl.com`, and `t.co`
+- Detects IP-based links
+- Flags unusually long domains
+- Flags domains with suspicious formatting
+- Calculates a phishing risk score
+- Gives a verdict:
+  - Likely Safe
+  - Suspicious
+  - Likely Phishing
+- Provides explanations for why an email may be risky
+- Includes both terminal and web app versions
 
-  * IP-based links
-  * Very long domains
-  * Domains with multiple hyphens
-* Generate a phishing risk score from 0 to 100
-* Classify emails as:
+---
 
-  * Likely Safe
-  * Suspicious
-  * Likely Phishing
-* Provide plain-English explanations for the result
-* Display a clean analysis report in the browser
+## Screenshots
 
-## Project Purpose
+### Homepage
 
-Phishing is one of the most common cybersecurity threats. Attackers often use urgent language, fake login pages, suspicious links, and social engineering to trick users into giving away personal information.
+![Homepage Screenshot](images/homepage.png)
 
-The goal of PhishGuard is to create a beginner-friendly but practical tool that demonstrates how phishing indicators can be detected using programming logic and cybersecurity rules.
+### Analysis Result Page
 
-## Tech Stack
+![Result Screenshot](images/results.png)
 
-* Python
-* Flask
-* HTML
-* CSS
-* Regular Expressions
-* URL Parsing
+### Terminal Version
 
-## How It Works
+![Terminal Scanner Screenshot](images/terminal-version.png)
 
-PhishGuard analyzes an email in multiple steps:
+To add screenshots, create an `images` folder in your project and place your screenshots inside it.
 
-1. The user pastes email text into the website.
-2. The app searches the email for suspicious words and phrases.
-3. The app extracts all links from the email.
-4. Each link is checked for risky patterns.
-5. A risk score is calculated based on the number and severity of suspicious indicators.
-6. The app returns a verdict and explanation.
-
-## Example Test Email
+Example:
 
 ```text
-URGENT! Your account has been suspended.
-Click here to verify your password now:
-http://bit.ly/fake-login
+phishguard/
+│
+├── images/
+│   ├── homepage.png
+│   ├── results.png
+│   └── terminal-version.png
 ```
 
-## Example Output
+---
+
+## Version History
+
+---
+
+## Version 2 — Flask Web Application
+
+Version 2 is the current version of PhishGuard. It upgraded the project from a terminal-based Python scanner into a web application using Flask.
+
+### What Changed in Version 2
+
+- Added a web interface using HTML and CSS
+- Created a homepage where users can paste email text
+- Added a results page to display the phishing analysis report
+- Separated the detection logic into a cleaner `detector.py` file
+- Used Flask routes to handle form submissions
+- Improved the project structure using `templates/` and `static/` folders
+- Made the tool easier for non-technical users to use
+- Added clearer explanations for why an email may be suspicious
+- Improved the visual presentation of the analysis report
+
+### Version 2 Features
+
+- Paste an email into a website
+- Click an **Analyze Email** button
+- View a phishing verdict
+- View a risk score
+- See suspicious words found
+- See links found in the email
+- See suspicious links and reasons
+- View a clean email analysis report
+- Analyze another email from the results page
+
+### Version 2 Web App Flow
 
 ```text
+User pastes email
+        ↓
+Flask sends text to detector.py
+        ↓
+PhishGuard scans content and links
+        ↓
+Risk score and verdict are generated
+        ↓
+Results are shown on the website
+```
+
+---
+
+## Version 1 — Python Terminal Scanner
+
+Version 1 was the first version of PhishGuard. It was a command-line Python program that analyzed email text directly in the terminal.
+
+### What Version 1 Did
+
+- Allowed users to paste email text into the terminal
+- Scanned the email for suspicious phishing-related keywords
+- Extracted links from the email
+- Checked links for suspicious patterns
+- Calculated a phishing risk score
+- Printed a phishing analysis report in the terminal
+
+### Version 1 Features
+
+- Terminal-based email input
+- Suspicious keyword detection
+- Link extraction
+- Shortened URL detection
+- IP-based link detection
+- Long domain detection
+- Risk score calculation
+- Text-based phishing report
+
+### Version 1 Example Output
+
+```text
+=== Phishing Analysis Report ===
+
 Verdict: Suspicious
-Risk Score: 55/100
+Risk Score: 41/100
 
 Suspicious Words Found:
 - urgent
-- account suspended
-- click here
 - verify
 - password
+- account suspended
+
+Links Found:
+- http://bit.ly/fake-login
 
 Suspicious Links:
-- http://bit.ly/fake-login — shortened link
+- http://bit.ly/fake-login: shortened link
 ```
 
-## Folder Structure
+---
+
+## Main Changes From Version 1 to Version 2
+
+| Area | Version 1 | Version 2 |
+|---|---|---|
+| Interface | Terminal | Flask website |
+| User input | Pasted into command line | Pasted into web form |
+| Output | Printed in terminal | Displayed on results page |
+| Code structure | Mostly one Python file | Split into `app.py`, `detector.py`, HTML, and CSS |
+| Design | No visual design | Styled web interface |
+| Usability | Better for developers | Easier for normal users |
+| Presentation | Basic text report | Clean web-based report |
+| Project quality | Basic prototype | More polished application |
+
+---
+
+## Project Structure
 
 ```text
 phishguard/
@@ -87,91 +193,197 @@ phishguard/
 │   ├── index.html
 │   └── result.html
 │
-└── static/
-    └── style.css
+├── static/
+│   └── style.css
+│
+├── images/
+│   ├── homepage.png
+│   ├── results.png
+│   └── terminal-version.png
+│
+└── README.md
 ```
 
-## Installation
+---
 
-Clone the repository:
+## How It Works
+
+PhishGuard uses rule-based detection to identify common phishing indicators.
+
+The program checks for:
+
+1. Suspicious words
+2. Suspicious links
+3. Shortened URLs
+4. IP-based URLs
+5. Very long domains
+6. Domains with unusual formatting
+
+The scanner then calculates a risk score and gives a verdict.
+
+---
+
+## Risk Score System
+
+PhishGuard assigns points based on suspicious indicators.
+
+Examples:
+
+- Suspicious keyword found: adds risk
+- Shortened link found: adds risk
+- IP address used instead of a domain: adds risk
+- Very long domain: adds risk
+- Multiple suspicious patterns: higher risk score
+
+The final score is capped at 100.
+
+### Verdict Levels
+
+| Score Range | Verdict |
+|---|---|
+| 0–34 | Likely Safe |
+| 35–69 | Suspicious |
+| 70–100 | Likely Phishing |
+
+---
+
+## Example Test Email
+
+You can test the app with this sample email:
+
+```text
+URGENT! Your account has been suspended.
+Click here to verify your password now:
+http://bit.ly/fake-login
+```
+
+Expected result:
+
+```text
+Verdict: Suspicious
+Risk Score: Medium/High
+Reason: Urgent language and shortened link detected
+```
+
+---
+
+## How to Run the Project
+
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/phishguard.git
+git clone https://github.com/YOUR-USERNAME/phishguard.git
 cd phishguard
 ```
 
-Install Flask:
+### 2. Install Flask
 
 ```bash
 pip install flask
 ```
 
-Run the application:
+### 3. Run the App
 
 ```bash
 python app.py
 ```
 
-Open the local website in your browser:
+### 4. Open in Browser
+
+Go to:
 
 ```text
 http://127.0.0.1:5000
 ```
 
+---
+
 ## Files Explained
 
 ### `app.py`
 
-Runs the Flask web server and handles website routes.
+This file runs the Flask web application. It handles the homepage and the analysis form.
 
 ### `detector.py`
 
-Contains the phishing detection logic, including keyword detection, link extraction, suspicious link analysis, risk scoring, and result explanations.
+This file contains the phishing detection logic. It scans the email text, extracts links, calculates the risk score, and returns the result.
 
 ### `templates/index.html`
 
-The homepage where users paste email text.
+This is the homepage where users paste the email text.
 
 ### `templates/result.html`
 
-The results page that displays the analysis report.
+This page displays the phishing analysis report.
 
 ### `static/style.css`
 
-Styles the website layout, forms, buttons, and result cards.
+This file styles the website and makes the app look cleaner.
 
-## Current Detection Methods
+---
 
-PhishGuard currently uses rule-based detection. It checks for common phishing indicators such as:
+## Technologies Used
 
-* Urgent or threatening language
-* Requests for passwords or login verification
-* Suspicious links
-* Shortened URLs
-* Long or strange domains
-* Links that use IP addresses instead of normal domain names
+- Python
+- Flask
+- HTML
+- CSS
+- Regular Expressions
+- URL Parsing
 
-## Limitations
+---
 
-PhishGuard is an educational cybersecurity project and should not be used as a professional security tool. It may produce false positives or false negatives. A real-world phishing detection system would need more advanced techniques, larger datasets, machine learning models, email header analysis, domain reputation checks, and continuous updates.
+## Cybersecurity Concepts Used
+
+- Phishing detection
+- Email security
+- Suspicious link analysis
+- Social engineering indicators
+- Risk scoring
+- Threat detection logic
+- URL analysis
+
+---
 
 ## Future Improvements
 
-Planned upgrades include:
+Planned features for future versions:
 
-* Add a machine learning model using TF-IDF and Logistic Regression
-* Train the model on labeled phishing and safe email datasets
-* Add email header analysis
-* Add sender domain reputation checks
-* Add AI-generated explanations
-* Add PDF report generation
-* Deploy the website online
-* Add user-friendly risk categories and charts
+- Add a machine learning model to classify emails as safe or phishing
+- Train the model using phishing email datasets
+- Add ML confidence scores
+- Add AI-generated explanations
+- Add PDF report generation
+- Improve sender email analysis
+- Improve domain reputation checks
+- Add file upload support for `.eml` files
+- Deploy the website online
+- Add a browser extension version
+
+---
+
+## Version Roadmap
+
+| Version | Description | Status |
+|---|---|---|
+| Version 1 | Python terminal phishing scanner | Complete |
+| Version 2 | Flask web application | Complete |
+| Version 3 | Machine learning email classifier | Planned |
+| Version 4 | AI explanation system | Planned |
+| Version 5 | Online deployment | Planned |
+
+---
 
 ## What I Learned
 
-While building this project, I learned how phishing emails use social engineering, suspicious links, and urgent wording to trick users. I also learned how to build a Flask web app, process text input, extract URLs with regular expressions, analyze domain patterns, and generate cybersecurity-style reports.
+Through this project, I learned how to build a cybersecurity tool from the ground up. I started with a basic Python scanner, then upgraded it into a web application using Flask.
+
+I learned how phishing emails use urgency, suspicious links, and social engineering tactics to trick users. I also learned how to organize a Python project, build a Flask web app, and create a cleaner user interface for a cybersecurity tool.
+
+This project helped me connect my interests in cybersecurity, programming, and machine learning.
+
+---
 
 ## Disclaimer
 
-This project is for educational purposes only. It is designed to help demonstrate phishing detection concepts and should not be relied on as the only method for determining whether an email is safe.
+PhishGuard is an educational cybersecurity project. It is not a replacement for professional email security software. Users should still be careful when opening links or attachments from unknown senders.
