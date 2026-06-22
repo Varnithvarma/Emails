@@ -13,7 +13,15 @@ words = [
     "this offer expires", "your account will be closed",
     "your account will be terminated", "billing problem", "payment declined",
     "invoice attached", "outstanding balance", "tax refund", "irs notice",
-    "social security number", "ssn", "bank account", "ire transfer", "western union", "bitcoin", "cryptocurrency payment",
+    "social security number", "ssn", "bank account", "credit card number",
+    "update payment details", "confirm your identity", "verify now",
+    "validate your account", "unusual login attempt", "new sign-in detected",
+    "we noticed a login", "someone tried to access your account",
+    "your password will expire", "your subscription has expired",
+    "renew your subscription", "failed delivery", "package held",
+    "delivery failed", "shipping problem", "track your package",
+    "courier service", "customs fee", "release your package",
+    "wire transfer", "western union", "bitcoin", "cryptocurrency payment",
     "send payment immediately", "urgent wire transfer needed",
     "ceo request", "confidential request", "do not tell anyone",
     "keep this confidential", "this is not a scam", "no obligation",
@@ -27,15 +35,7 @@ words = [
     "your information has been compromised", "reset link", "click below to reset",
     "claim now", "redeem your reward", "you've been chosen", "lucky winner",
     "free gift", "no purchase necessary", "lottery winner", "inheritance",
-    "next of kin", "beneficiary", "millions of dollars", "investment opportunity"credit card number",
-    "update payment details", "confirm your identity", "verify now",
-    "validate your account", "unusual login attempt", "new sign-in detected",
-    "we noticed a login", "someone tried to access your account",
-    "your password will expire", "your subscription has expired",
-    "renew your subscription", "failed delivery", "package held",
-    "delivery failed", "shipping problem", "track your package",
-    "courier service", "customs fee", "release your package",
-    "w
+    "next of kin", "beneficiary", "millions of dollars", "investment opportunity"
 ]
 
 email_lower = email.lower()
