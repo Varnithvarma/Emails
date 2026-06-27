@@ -14,6 +14,10 @@ def home():
 def analyze():
     email_text = request.form.get("email_text", "")
 
+    print("\n========== EMAIL TEXT RECEIVED ==========")
+    print(email_text)
+    print("=========================================\n")
+
     if not email_text.strip():
         return render_template(
             "index.html",

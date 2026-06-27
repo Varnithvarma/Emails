@@ -1,78 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>PhishGuard Results</title>
+    <title>PhishGuard — Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Analysis Report</h1>
+    <div class="scan-grid"></div>
 
-        <div class="card">
-            <h2>Verdict: {{ result.verdict }}</h2>
-            <p class="score">Risk Score: {{ result.score }}/100</p>
-        </div>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="logo">
+                <span class="logo-bracket">[</span>
+                <span class="logo-text">PHISH<span class="logo-accent">GUARD</span></span>
+                <span class="logo-bracket">]</span>
+            </div>
+            <a href="/" class="back-link">← new scan</a>
+        </header>
 
-        <div class="card">
-            <h2>Why this result?</h2>
+        <main class="results-main">
 
-            {% for explanation in result.explanations %}
-                <p>{{ explanation }}</p>
-            {% endfor %}
-        </div>
+            <!-- Verdict banner -->
+            <div class="verdict-banner verdict-{{ result.verdict | lower | replace(' ', '-') }}">
+                <div class="verdict-left">
+                    <p class="verdict-eyebrow">Verdict</p>
+                    <h1 class="verdict-text">{{ result.verdict }}</h1>
+                </div>
+                <div class="verdict-right">
+                    <div class="score-ring">
+                        <svg viewBox="0 0 120 120" class="ring-svg">
+                            <circle class="ring-track" cx="60" cy="60" r="50"/>
+                            <circle class="ring-fill" cx="60" cy="60" r="50"
+                                stroke-dasharray="314"
+                                stroke-dashoffset="{{ 314 - (result.score / 100 * 314) }}"
+                            />
+                        </svg>
+                        <div class="score-inner">
+                            <span class="score-num">{{ result.score }}</span>
+                            <span class="score-denom">/100</span>
+                        </div>
+                    </div>
+                    <p class="score-label">risk score</p>
+                </div>
+            </div>
 
-        <div class="card">
-            <h2>Suspicious Words Found</h2>
+            <div class="results-grid">
 
-            {% if result.words %}
-                <ul>
-                    {% for word in result.words %}
-                        <li>{{ word }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>None found.</p>
-            {% endif %}
-        </div>
+                <!-- Why this result -->
+                <section class="result-card card-full">
+                    <h2 class="card-title">
+                        <span class="card-num">01</span> Analysis
+                    </h2>
+                    <div class="explanation-list">
+                        {% for explanation in result.explanations %}
+                            <div class="explanation-item">
+                                <span class="expl-bullet">▸</span>
+                                <p>{{ explanation }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
 
-        <div class="card">
-            <h2>Links Found</h2>
+                <!-- Suspicious words -->
+                <section class="result-card">
+                    <h2 class="card-title">
+                        <span class="card-num">02</span> Flagged Words
+                    </h2>
+                    {% if result.words %}
+                        <div class="tag-cloud">
+                            {% for word in result.words %}
+                                <span class="word-tag">{{ word }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state">No suspicious words found.</p>
+                    {% endif %}
+                </section>
 
-            {% if result.links %}
-                <ul>
-                    {% for link in result.links %}
-                        <li>{{ link }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No links found.</p>
-            {% endif %}
-        </div>
+                <!-- Links found -->
+                <section class="result-card">
+                    <h2 class="card-title">
+                        <span class="card-num">03</span> Links Found
+                    </h2>
+                    {% if result.links %}
+                        <ul class="link-list">
+                            {% for link in result.links %}
+                                <li class="link-item">
+                                    <span class="link-icon">⎋</span>
+                                    <span class="link-url">{{ link }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="empty-state">No links found.</p>
+                    {% endif %}
+                </section>
 
-        <div class="card">
-            <h2>Suspicious Links</h2>
+                <!-- Suspicious links -->
+                <section class="result-card card-full">
+                    <h2 class="card-title">
+                        <span class="card-num">04</span> Suspicious Links
+                    </h2>
+                    {% if result.suspicious_links %}
+                        <div class="sus-link-list">
+                            {% for item in result.suspicious_links %}
+                                <div class="sus-link-item">
+                                    <div class="sus-link-url">{{ item.link }}</div>
+                                    <div class="sus-link-reasons">
+                                        {% for reason in item.reasons %}
+                                            <span class="reason-tag">{{ reason }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state">No suspicious links found.</p>
+                    {% endif %}
+                </section>
 
-            {% if result.suspicious_links %}
-                <ul>
-                    {% for item in result.suspicious_links %}
-                        <li>
-                            {{ item.link }} —
-                            {{ item.reasons | join(", ") }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No suspicious links found.</p>
-            {% endif %}
-        </div>
+                <!-- Email preview -->
+                <section class="result-card card-full">
+                    <h2 class="card-title">
+                        <span class="card-num">05</span> Email Preview
+                    </h2>
+                    <pre class="email-preview">{{ email_text }}</pre>
+                </section>
 
-        <div class="card">
-            <h2>Email Preview</h2>
-            <pre>{{ email_text }}</pre>
-        </div>
+            </div>
 
-        <a href="/" class="back-link">Analyze another email</a>
+            <div class="results-footer">
+                <a href="/" class="scan-btn">
+                    <span class="btn-pulse"></span>
+                    <span class="btn-label">Scan another email</span>
+                    <span class="btn-icon">→</span>
+                </a>
+            </div>
+        </main>
     </div>
 </body>
 </html>

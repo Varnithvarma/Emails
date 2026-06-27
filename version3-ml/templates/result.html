@@ -1,99 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>PhishGuard Results</title>
+    <title>PhishGuard — Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Analysis Report</h1>
+    <div class="scan-grid"></div>
 
-        <div class="card">
-            <h2>Rule-Based Verdict: {{ result.verdict }}</h2>
-            <p class="score">Rule-Based Risk Score: {{ result.score }}/100</p>
-        </div>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="logo">
+                <span class="logo-bracket">[</span>
+                <span class="logo-text">PHISH<span class="logo-accent">GUARD</span></span>
+                <span class="logo-bracket">]</span>
+            </div>
+            <a href="/" class="back-link">← new scan</a>
+        </header>
 
-        <div class="card">
-            <h2>Machine Learning Verdict</h2>
+        <main class="results-main">
 
-            {% if ml_result.available %}
-                <p><strong>Verdict:</strong> {{ ml_result.verdict }}</p>
-                <p><strong>Phishing Confidence:</strong> {{ ml_result.phishing_confidence }}%</p>
-            {% else %}
-                <p>{{ ml_result.verdict }}</p>
+            <!-- Rule-based verdict banner -->
+            <div class="verdict-banner verdict-{{ result.verdict | lower | replace(' ', '-') }}">
+                <div class="verdict-left">
+                    <p class="verdict-eyebrow">Rule-Based Verdict</p>
+                    <h1 class="verdict-text">{{ result.verdict }}</h1>
+                </div>
+
+                <div class="verdict-right">
+                    <div class="score-ring">
+                        <svg viewBox="0 0 120 120" class="ring-svg">
+                            <circle class="ring-track" cx="60" cy="60" r="50"></circle>
+                            <circle class="ring-fill" cx="60" cy="60" r="50"
+                                stroke-dasharray="314"
+                                stroke-dashoffset="{{ 314 - (result.score / 100 * 314) }}">
+                            </circle>
+                        </svg>
+
+                        <div class="score-inner">
+                            <span class="score-num">{{ result.score }}</span>
+                            <span class="score-denom">/100</span>
+                        </div>
+                    </div>
+
+                    <p class="score-label">risk score</p>
+                </div>
+            </div>
+
+            <!-- Machine learning verdict banner -->
+            {% if ml_result %}
+                <div class="ml-banner ml-{{ ml_result.verdict | lower | replace(' ', '-') }}">
+                    <div class="ml-left">
+                        <p class="ml-eyebrow">
+                            <span class="ml-badge">ML</span> Machine Learning Verdict
+                        </p>
+
+                        {% if ml_result.available %}
+                            <h2 class="ml-label">{{ ml_result.verdict }}</h2>
+                        {% else %}
+                            <h2 class="ml-label">Model Not Trained</h2>
+                        {% endif %}
+                    </div>
+
+                    <div class="ml-right">
+                        <div class="ml-conf-bar-wrap">
+                            <div class="ml-conf-label">
+                                Phishing Confidence:
+                                <strong>{{ ml_result.phishing_confidence }}%</strong>
+                            </div>
+
+                            <div class="ml-conf-track">
+                                <div class="ml-conf-fill" style="width: {{ ml_result.phishing_confidence }}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
-        </div>
 
-        <div class="card">
-            <h2>Why this result?</h2>
+            <div class="results-grid">
 
-            {% for explanation in result.explanations %}
-                <p>{{ explanation }}</p>
-            {% endfor %}
+                <!-- Explanation section -->
+                <section class="result-card card-full">
+                    <h2 class="card-title">
+                        <span class="card-num">01</span> Analysis Explanation
+                    </h2>
 
-            {% if ml_result.available %}
-                {% if ml_result.phishing_confidence >= 70 %}
-                    <p>The machine learning model detected strong phishing-like patterns in the email text.</p>
-                {% elif ml_result.phishing_confidence >= 50 %}
-                    <p>The machine learning model found some phishing-like signals, but the result is not certain.</p>
-                {% else %}
-                    <p>The machine learning model did not find enough phishing-like patterns to classify this email as suspicious.</p>
-                {% endif %}
-            {% endif %}
-        </div>
+                    <div class="explanation-list">
+                        {% for explanation in result.explanations %}
+                            <div class="explanation-item">
+                                <span class="expl-bullet">▸</span>
+                                <p>{{ explanation }}</p>
+                            </div>
+                        {% endfor %}
 
-        <div class="card">
-            <h2>Suspicious Words Found</h2>
+                        {% if ml_result and ml_result.available %}
+                            <div class="explanation-item">
+                                <span class="expl-bullet ml-bullet">◈</span>
 
-            {% if result.words %}
-                <ul>
-                    {% for word in result.words %}
-                        <li>{{ word }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>None found.</p>
-            {% endif %}
-        </div>
+                                {% if ml_result.phishing_confidence >= 70 %}
+                                    <p>The machine learning model detected strong phishing-like patterns in the email text.</p>
+                                {% elif ml_result.phishing_confidence >= 50 %}
+                                    <p>The machine learning model found some phishing-like signals, but the result is not certain.</p>
+                                {% else %}
+                                    <p>The machine learning model did not find enough phishing-like patterns to classify this email as suspicious.</p>
+                                {% endif %}
+                            </div>
+                        {% elif ml_result %}
+                            <div class="explanation-item">
+                                <span class="expl-bullet ml-bullet">◈</span>
+                                <p>The machine learning model has not been trained yet. Run <code>python train_model.py</code> before starting the Flask app.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
 
-        <div class="card">
-            <h2>Links Found</h2>
+                <!-- Suspicious words -->
+                <section class="result-card">
+                    <h2 class="card-title">
+                        <span class="card-num">02</span> Flagged Words
+                    </h2>
 
-            {% if result.links %}
-                <ul>
-                    {% for link in result.links %}
-                        <li>{{ link }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No links found.</p>
-            {% endif %}
-        </div>
+                    {% if result.words %}
+                        <div class="tag-cloud">
+                            {% for word in result.words %}
+                                <span class="word-tag">{{ word }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state">No suspicious words found.</p>
+                    {% endif %}
+                </section>
 
-        <div class="card">
-            <h2>Suspicious Links</h2>
+                <!-- Links found -->
+                <section class="result-card">
+                    <h2 class="card-title">
+                        <span class="card-num">03</span> Links Found
+                    </h2>
 
-            {% if result.suspicious_links %}
-                <ul>
-                    {% for item in result.suspicious_links %}
-                        <li>
-                            {{ item.link }} —
-                            {{ item.reasons | join(", ") }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No suspicious links found.</p>
-            {% endif %}
-        </div>
+                    {% if result.links %}
+                        <ul class="link-list">
+                            {% for link in result.links %}
+                                <li class="link-item">
+                                    <span class="link-icon">⎋</span>
+                                    <span class="link-url">{{ link }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="empty-state">No links found.</p>
+                    {% endif %}
+                </section>
 
-        <div class="card">
-            <h2>Email Preview</h2>
-            <pre>{{ email_text }}</pre>
-        </div>
+                <!-- Suspicious links -->
+                <section class="result-card card-full">
+                    <h2 class="card-title">
+                        <span class="card-num">04</span> Suspicious Links
+                    </h2>
 
-        <a href="/" class="back-link">Analyze another email</a>
+                    {% if result.suspicious_links %}
+                        <div class="sus-link-list">
+                            {% for item in result.suspicious_links %}
+                                <div class="sus-link-item">
+                                    <div class="sus-link-url">{{ item.link }}</div>
+
+                                    <div class="sus-link-reasons">
+                                        {% for reason in item.reasons %}
+                                            <span class="reason-tag">{{ reason }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-state">No suspicious links found.</p>
+                    {% endif %}
+                </section>
+
+                <!-- Email preview -->
+                <section class="result-card card-full">
+                    <h2 class="card-title">
+                        <span class="card-num">05</span> Email Preview
+                    </h2>
+
+                    <pre class="email-preview">{{ email_text }}</pre>
+                </section>
+
+            </div>
+
+            <div class="results-footer">
+                <a href="/" class="scan-btn">
+                    <span class="btn-pulse"></span>
+                    <span class="btn-label">Scan another email</span>
+                    <span class="btn-icon">→</span>
+                </a>
+            </div>
+
+        </main>
     </div>
 </body>
 </html>

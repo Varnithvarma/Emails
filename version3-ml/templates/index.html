@@ -1,30 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>PhishGuard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <div class="container">
-        <h1>PhishGuard</h1>
-        <p class="subtitle">AI-inspired phishing email scanner</p>
+    <div class="scan-grid"></div>
 
-        <form action="/analyze" method="POST">
-            <label for="email_text">Paste email text below:</label>
+    <div class="page-wrap">
+        <header class="site-header">
+            <div class="logo">
+                <span class="logo-bracket">[</span>
+                <span class="logo-text">PHISH<span class="logo-accent">GUARD</span></span>
+                <span class="logo-bracket">]</span>
+            </div>
+            <div class="header-tag">v3.0.1 · threat detection</div>
+        </header>
 
-            <textarea 
-                name="email_text" 
-                id="email_text" 
-                placeholder="Paste a suspicious email here..."
-            ></textarea>
+        <main class="main-content">
+            <div class="hero">
+                <p class="eyebrow">AI-powered analysis</p>
+                <h1 class="hero-title">Paste. Scan.<br><span class="title-accent">Know instantly.</span></h1>
+                <p class="hero-sub">Drop any suspicious email below. PhishGuard dissects links, language patterns, and sender signals in seconds.</p>
+            </div>
 
-            {% if error %}
-                <p class="error">{{ error }}</p>
-            {% endif %}
+            <form action="/analyze" method="POST" class="scan-form" id="scanForm">
+                <div class="textarea-shell">
+                    <label for="email_text" class="field-label">
+                        <span class="label-dot"></span> email input
+                    </label>
+                    <textarea
+                        name="email_text"
+                        id="email_text"
+                        placeholder="Paste email content here — headers, body, links, all of it..."
+                        spellcheck="false"
+                    ></textarea>
+                    <div class="char-counter"><span id="charCount">0</span> characters</div>
+                </div>
 
-            <button type="submit">Analyze Email</button>
-        </form>
+                {% if error %}
+                    <div class="error-msg">
+                        <span class="error-icon">⚠</span> {{ error }}
+                    </div>
+                {% endif %}
+
+                <div class="submit-zone">
+                    <button type="submit" class="scan-btn" id="scanBtn">
+                        <span class="btn-pulse"></span>
+                        <span class="btn-label">Run Scan</span>
+                        <span class="btn-icon"></span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="feature-strip">
+                <div class="feature-item">
+                    <span class="feat-icon">⬡</span>
+                    <span>Link reputation check</span>
+                </div>
+                <div class="feature-divider"></div>
+                <div class="feature-item">
+                    <span class="feat-icon">⬡</span>
+                    <span>Urgency language detection</span>
+                </div>
+                <div class="feature-divider"></div>
+                <div class="feature-item">
+                    <span class="feat-icon">⬡</span>
+                    <span>Spoofing pattern analysis</span>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <script>
+        const textarea = document.getElementById('email_text');
+        const counter = document.getElementById('charCount');
+        const form = document.getElementById('scanForm');
+        const btn = document.getElementById('scanBtn');
+
+        textarea.addEventListener('input', () => {
+            counter.textContent = textarea.value.length.toLocaleString();
+        });
+
+        form.addEventListener('submit', () => {
+            btn.classList.add('scanning');
+            btn.querySelector('.btn-label').textContent = 'Scanning…';
+        });
+    </script>
 </body>
 </html>
