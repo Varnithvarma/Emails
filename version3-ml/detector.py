@@ -98,9 +98,9 @@ def calculate_score(words, suspicious_links):
 
 
 def get_verdict(score):
-    if score >= 70:
+    if score >= 50:
         return "Likely Phishing"
-    elif score >= 35:
+    elif score >= 25:
         return "Suspicious"
     else:
         return "Likely Safe"
