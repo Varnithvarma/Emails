@@ -1,8 +1,6 @@
 # PhishGuard — AI-Based Phishing Email Detection Tool
 
-PhishGuard is a cybersecurity project that analyzes email text and detects possible phishing indicators. The tool checks for suspicious words, risky links, shortened URLs, and common scam patterns, then generates a risk score and verdict.
-
-This project started as a Python terminal scanner and was later upgraded into a Flask web application.
+PhishGuard is a cybersecurity tool that analyzes email text and detects phishing indicators using both rule-based logic and a machine learning classifier. The tool checks for suspicious words, risky links, shortened URLs, and common scam patterns, then generates a risk score and verdict from two independent detection engines.
 
 ---
 
@@ -10,17 +8,15 @@ This project started as a Python terminal scanner and was later upgraded into a 
 
 Phishing emails are one of the most common ways attackers steal passwords, personal information, and financial data. PhishGuard helps users identify suspicious emails by analyzing the content and links inside the message.
 
-The goal of this project is to combine cybersecurity, Python programming, and web development into one practical tool.
+The goal of this project is to combine cybersecurity, Python programming, machine learning, and web development into one practical tool.
 
 ---
 
 ## Current Version
 
-The current version is:
+**Version 3 — Machine Learning Classifier**
 
-**Version 2 — Flask Web Application**
-
-Version 2 allows users to paste suspicious email text into a website and receive a phishing analysis report.
+Version 3 adds a trained ML model alongside the existing rule-based engine. Both engines analyze every email independently and their results are displayed side by side on the results page.
 
 ---
 
@@ -32,13 +28,16 @@ Version 2 allows users to paste suspicious email text into a website and receive
 - Detects IP-based links
 - Flags unusually long domains
 - Flags domains with suspicious formatting
-- Calculates a phishing risk score
-- Gives a verdict:
+- Calculates a phishing risk score (rule-based)
+- Classifies emails using a trained ML model
+- Displays ML confidence score as a percentage
+- Shows ML signal breakdown (if available)
+- Gives a verdict from each engine:
   - Likely Safe
   - Suspicious
   - Likely Phishing
 - Provides explanations for why an email may be risky
-- Includes both terminal and web app versions
+- Clean, simple web interface
 
 ---
 
@@ -56,10 +55,6 @@ Version 2 allows users to paste suspicious email text into a website and receive
 
 ![Terminal Scanner Screenshot](images/terminal-version.png)
 
-To add screenshots, create an `images` folder in your project and place your screenshots inside it.
-
-Example:
-
 ```text
 phishguard/
 │
@@ -75,9 +70,44 @@ phishguard/
 
 ---
 
+## Version 3 — Machine Learning Classifier
+
+Version 3 adds a second detection engine powered by machine learning. Both the rule-based engine and the ML classifier run on every submitted email, and their results are shown side by side.
+
+### What Changed in Version 3
+
+- Added `ml_detector.py` with a trained ML classifier
+- Results page now shows both rule-based and ML verdicts
+- ML confidence score displayed as a progress bar
+- ML signal breakdown section (if the model returns feature details)
+- Updated Flask routes in `app.py` to call both engines and pass `ml_result` to the template
+
+### Version 3 Web App Flow
+
+```text
+User pastes email
+        ↓
+Flask sends text to detector.py (rule-based)
+Flask sends text to ml_detector.py (ML model)
+        ↓
+Rule engine: scans keywords, links, patterns → risk score + verdict
+ML engine:   classifies email → label + confidence score
+        ↓
+Both results displayed on results page
+```
+
+### Version 3 Features
+
+- All Version 2 features
+- ML verdict (label + confidence %)
+- ML signal breakdown (if available from model)
+- Side-by-side rule-based and ML analysis
+
+---
+
 ## Version 2 — Flask Web Application
 
-Version 2 is the current version of PhishGuard. It upgraded the project from a terminal-based Python scanner into a web application using Flask.
+Version 2 upgraded the project from a terminal-based Python scanner into a web application using Flask.
 
 ### What Changed in Version 2
 
@@ -89,19 +119,6 @@ Version 2 is the current version of PhishGuard. It upgraded the project from a t
 - Improved the project structure using `templates/` and `static/` folders
 - Made the tool easier for non-technical users to use
 - Added clearer explanations for why an email may be suspicious
-- Improved the visual presentation of the analysis report
-
-### Version 2 Features
-
-- Paste an email into a website
-- Click an **Analyze Email** button
-- View a phishing verdict
-- View a risk score
-- See suspicious words found
-- See links found in the email
-- See suspicious links and reasons
-- View a clean email analysis report
-- Analyze another email from the results page
 
 ### Version 2 Web App Flow
 
@@ -132,17 +149,6 @@ Version 1 was the first version of PhishGuard. It was a command-line Python prog
 - Calculated a phishing risk score
 - Printed a phishing analysis report in the terminal
 
-### Version 1 Features
-
-- Terminal-based email input
-- Suspicious keyword detection
-- Link extraction
-- Shortened URL detection
-- IP-based link detection
-- Long domain detection
-- Risk score calculation
-- Text-based phishing report
-
 ### Version 1 Example Output
 
 ```text
@@ -166,18 +172,18 @@ Suspicious Links:
 
 ---
 
-## Main Changes From Version 1 to Version 2
+## Main Changes Across Versions
 
-| Area | Version 1 | Version 2 |
-|---|---|---|
-| Interface | Terminal | Flask website |
-| User input | Pasted into command line | Pasted into web form |
-| Output | Printed in terminal | Displayed on results page |
-| Code structure | Mostly one Python file | Split into `app.py`, `detector.py`, HTML, and CSS |
-| Design | No visual design | Styled web interface |
-| Usability | Better for developers | Easier for normal users |
-| Presentation | Basic text report | Clean web-based report |
-| Project quality | Basic prototype | More polished application |
+| Area | Version 1 | Version 2 | Version 3 |
+|---|---|---|---|
+| Interface | Terminal | Flask website | Flask website |
+| User input | Command line | Web form | Web form |
+| Output | Terminal text | Results page | Results page (dual engines) |
+| Detection | Rule-based | Rule-based | Rule-based + ML classifier |
+| ML support | None | None | Label + confidence + breakdown |
+| Design | No design | Clean styled interface | Clean styled interface |
+| Code structure | One Python file | `app.py`, `detector.py`, HTML, CSS | + `ml_detector.py` |
+| Usability | Developers | General users | General users |
 
 ---
 
@@ -188,6 +194,7 @@ phishguard/
 │
 ├── app.py
 ├── detector.py
+├── ml_detector.py
 │
 ├── templates/
 │   ├── index.html
@@ -208,9 +215,11 @@ phishguard/
 
 ## How It Works
 
-PhishGuard uses rule-based detection to identify common phishing indicators.
+PhishGuard uses two independent detection engines.
 
-The program checks for:
+### Rule-Based Engine (`detector.py`)
+
+Checks for:
 
 1. Suspicious words
 2. Suspicious links
@@ -219,23 +228,30 @@ The program checks for:
 5. Very long domains
 6. Domains with unusual formatting
 
-The scanner then calculates a risk score and gives a verdict.
+Then calculates a risk score and gives a verdict.
+
+### ML Engine (`ml_detector.py`)
+
+- Classifies the email using a trained machine learning model
+- Returns a label (`Phishing`, `Suspicious`, `Safe`, etc.)
+- Returns a confidence score between 0.0 and 1.0
+- Optionally returns a list of signal details explaining the classification
+
+The ML result is passed to the template as `ml_result` with the structure:
+
+```python
+{
+  "label":      "Phishing",   # verdict string
+  "confidence": 0.92,         # float 0.0–1.0
+  "details":    ["..."]       # optional list of explanation strings
+}
+```
 
 ---
 
-## Risk Score System
+## Risk Score System (Rule-Based)
 
-PhishGuard assigns points based on suspicious indicators.
-
-Examples:
-
-- Suspicious keyword found: adds risk
-- Shortened link found: adds risk
-- IP address used instead of a domain: adds risk
-- Very long domain: adds risk
-- Multiple suspicious patterns: higher risk score
-
-The final score is capped at 100.
+PhishGuard assigns points based on suspicious indicators. The final score is capped at 100.
 
 ### Verdict Levels
 
@@ -249,8 +265,6 @@ The final score is capped at 100.
 
 ## Example Test Email
 
-You can test the app with this sample email:
-
 ```text
 URGENT! Your account has been suspended.
 Click here to verify your password now:
@@ -260,9 +274,12 @@ http://bit.ly/fake-login
 Expected result:
 
 ```text
-Verdict: Suspicious
+Rule-Based Verdict: Suspicious
 Risk Score: Medium/High
 Reason: Urgent language and shortened link detected
+
+ML Verdict: Phishing
+Confidence: ~90%
 ```
 
 ---
@@ -276,10 +293,10 @@ git clone https://github.com/YOUR-USERNAME/phishguard.git
 cd phishguard
 ```
 
-### 2. Install Flask
+### 2. Install Dependencies
 
 ```bash
-pip install flask
+pip install flask scikit-learn
 ```
 
 ### 3. Run the App
@@ -289,8 +306,6 @@ python app.py
 ```
 
 ### 4. Open in Browser
-
-Go to:
 
 ```text
 http://127.0.0.1:5000
@@ -302,23 +317,27 @@ http://127.0.0.1:5000
 
 ### `app.py`
 
-This file runs the Flask web application. It handles the homepage and the analysis form.
+Runs the Flask web application. Handles the homepage route and the `/analyze` POST route. Calls both `detector.py` and `ml_detector.py` and passes both results to `result.html`.
 
 ### `detector.py`
 
-This file contains the phishing detection logic. It scans the email text, extracts links, calculates the risk score, and returns the result.
+Rule-based phishing detection logic. Scans the email text, extracts links, calculates the risk score, and returns a result dict.
+
+### `ml_detector.py`
+
+Machine learning classifier. Takes the raw email text and returns a label, confidence score, and optional signal details.
 
 ### `templates/index.html`
 
-This is the homepage where users paste the email text.
+Homepage where users paste the email text.
 
 ### `templates/result.html`
 
-This page displays the phishing analysis report.
+Results page. Displays the rule-based verdict (score ring, flagged words, suspicious links) and the ML verdict (confidence bar, signal breakdown) side by side.
 
 ### `static/style.css`
 
-This file styles the website and makes the app look cleaner.
+Styles the website. Keeps the interface clean and readable with a light background and clear card-based layout.
 
 ---
 
@@ -326,8 +345,8 @@ This file styles the website and makes the app look cleaner.
 
 - Python
 - Flask
-- HTML
-- CSS
+- scikit-learn (ML classifier)
+- HTML / CSS
 - Regular Expressions
 - URL Parsing
 
@@ -342,23 +361,7 @@ This file styles the website and makes the app look cleaner.
 - Risk scoring
 - Threat detection logic
 - URL analysis
-
----
-
-## Future Improvements
-
-Planned features for future versions:
-
-- Add a machine learning model to classify emails as safe or phishing
-- Train the model using phishing email datasets
-- Add ML confidence scores
-- Add AI-generated explanations
-- Add PDF report generation
-- Improve sender email analysis
-- Improve domain reputation checks
-- Add file upload support for `.eml` files
-- Deploy the website online
-- Add a browser extension version
+- Machine learning classification
 
 ---
 
@@ -368,19 +371,29 @@ Planned features for future versions:
 |---|---|---|
 | Version 1 | Python terminal phishing scanner | Complete |
 | Version 2 | Flask web application | Complete |
-| Version 3 | Machine learning email classifier | Planned |
+| Version 3 | Machine learning email classifier | Complete |
 | Version 4 | AI explanation system | Planned |
 | Version 5 | Online deployment | Planned |
 
 ---
 
+## Future Improvements
+
+- Add AI-generated explanations for ML predictions
+- Add PDF report generation
+- Improve sender email analysis
+- Improve domain reputation checks
+- Add file upload support for `.eml` files
+- Deploy the website online
+- Add a browser extension version
+
+---
+
 ## What I Learned
 
-Through this project, I learned how to build a cybersecurity tool from the ground up. I started with a basic Python scanner, then upgraded it into a web application using Flask.
+Through this project, I learned how to build a cybersecurity tool from the ground up — starting with a basic Python terminal scanner, upgrading it into a Flask web app, and then adding a machine learning classifier as a second detection engine.
 
-I learned how phishing emails use urgency, suspicious links, and social engineering tactics to trick users. I also learned how to organize a Python project, build a Flask web app, and create a cleaner user interface for a cybersecurity tool.
-
-This project helped me connect my interests in cybersecurity, programming, and machine learning.
+I learned how phishing emails use urgency, suspicious links, and social engineering to trick users. I also learned how to organize a multi-file Python project, build Flask routes, integrate an ML model into a web app, and pass multiple result objects to Jinja2 templates.
 
 ---
 
