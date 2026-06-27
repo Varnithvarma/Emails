@@ -1,0 +1,91 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 850px;
+    margin: 50px auto;
+    background: white;
+    padding: 35px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+label {
+    font-weight: bold;
+}
+
+textarea {
+    width: 100%;
+    height: 280px;
+    margin-top: 10px;
+    padding: 15px;
+    font-size: 15px;
+    resize: vertical;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+button {
+    margin-top: 18px;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.card {
+    background: #f9fafb;
+    padding: 20px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    border: 1px solid #e2e4e8;
+}
+
+.score {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.error {
+    color: darkred;
+    font-weight: bold;
+}
+
+pre {
+    white-space: pre-wrap;
+    background: #eeeeee;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 15px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #222;
+}

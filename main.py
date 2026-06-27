@@ -1,4 +1,3 @@
-email = input('Please Paste the Email you recevied:\n')
 words = [
     "urgent", "verify", "password", "login", "account suspended",
     "click here", "act now", "limited time", "confirm your account",
@@ -38,16 +37,57 @@ words = [
     "next of kin", "beneficiary", "millions of dollars", "investment opportunity"
 ]
 
-email_lower = email.lower()
-found = []
-for phrase in words:
-    if phrase in email_lower:
-        found.append(phrase)
 
-if found:
-    print(f"SCAM EMAIL PLEASE IGNORE ({len(found)}):")
-    for phrase in found:
-        print(f" - {phrase}")
+def scan_email(email):
+    email_lower = email.lower()
+    found = []
 
-else:
-    print("No suspicious phrases found.")
+    for phrase in words:
+        if phrase in email_lower:
+            found.append(phrase)
+
+    print("\n===== PHISHGUARD RESULT =====")
+
+    if found:
+        print(f"SCAM EMAIL WARNING: {len(found)} suspicious phrase(s) found.")
+        print("\nSuspicious phrases:")
+        for phrase in found:
+            print(f" - {phrase}")
+    else:
+        print("No suspicious phrases found.")
+
+    print("=============================\n")
+
+
+def main():
+    print("====================================")
+    print("       PHISHGUARD EMAIL SCANNER      ")
+    print("====================================")
+    print("Paste an email to scan it for scam/phishing phrases.")
+    print("Type 'quit' anytime to close the program.\n")
+
+    while True:
+        email = input("Please paste the email you received:\n\n")
+
+        if email.lower().strip() in ["quit", "exit", "q"]:
+            print("\nClosing PhishGuard...")
+            break
+
+        if not email.strip():
+            print("\nYou did not paste anything. Try again.\n")
+            continue
+
+        scan_email(email)
+
+        again = input("Scan another email? (y/n): ").lower().strip()
+
+        if again not in ["y", "yes"]:
+            print("\nThanks for using PhishGuard.")
+            break
+
+        print("\n")
+
+
+if __name__ == "__main__":
+    main()
+    input("\nPress Enter to close...")

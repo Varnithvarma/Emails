@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PhishGuard Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Analysis Report</h1>
+
+        <div class="card">
+            <h2>Rule-Based Verdict: {{ result.verdict }}</h2>
+            <p class="score">Rule-Based Risk Score: {{ result.score }}/100</p>
+        </div>
+
+        <div class="card">
+            <h2>Machine Learning Verdict</h2>
+
+            {% if ml_result.available %}
+                <p><strong>Verdict:</strong> {{ ml_result.verdict }}</p>
+                <p><strong>Phishing Confidence:</strong> {{ ml_result.phishing_confidence }}%</p>
+            {% else %}
+                <p>{{ ml_result.verdict }}</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Why this result?</h2>
+
+            {% for explanation in result.explanations %}
+                <p>{{ explanation }}</p>
+            {% endfor %}
+
+            {% if ml_result.available %}
+                {% if ml_result.phishing_confidence >= 70 %}
+                    <p>The machine learning model detected strong phishing-like patterns in the email text.</p>
+                {% elif ml_result.phishing_confidence >= 50 %}
+                    <p>The machine learning model found some phishing-like signals, but the result is not certain.</p>
+                {% else %}
+                    <p>The machine learning model did not find enough phishing-like patterns to classify this email as suspicious.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Suspicious Words Found</h2>
+
+            {% if result.words %}
+                <ul>
+                    {% for word in result.words %}
+                        <li>{{ word }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>None found.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Links Found</h2>
+
+            {% if result.links %}
+                <ul>
+                    {% for link in result.links %}
+                        <li>{{ link }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No links found.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Suspicious Links</h2>
+
+            {% if result.suspicious_links %}
+                <ul>
+                    {% for item in result.suspicious_links %}
+                        <li>
+                            {{ item.link }} —
+                            {{ item.reasons | join(", ") }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No suspicious links found.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h2>Email Preview</h2>
+            <pre>{{ email_text }}</pre>
+        </div>
+
+        <a href="/" class="back-link">Analyze another email</a>
+    </div>
+</body>
+</html>
